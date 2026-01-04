@@ -58,3 +58,7 @@ MANIFEST
 venv/
 env/
 ENV/
+
+
+# Exclude web folder
+web/
