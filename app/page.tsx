@@ -29,7 +29,7 @@ import { Toaster, toast } from 'react-hot-toast';
 import { ArrowUp, X } from 'lucide-react';
 
 export default function Home() {
-  const [simulationData, setSimulationData] = useState(null);
+  const [simulationData, setSimulationData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
