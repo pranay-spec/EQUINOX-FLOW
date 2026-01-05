@@ -515,53 +515,96 @@ AI-Powered Financial Verification System
       <div style={{ 
         background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.05) 100%)',
         borderRadius: '16px',
-        padding: '20px',
+        padding: '24px',
         border: '1px solid rgba(102, 126, 234, 0.2)',
         marginBottom: '8px'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <Globe style={{ width: '20px', height: '20px', color: '#667eea' }} />
-            <span style={{ fontSize: '14px', fontWeight: 600, color: 'white' }}>Select Destination City</span>
+            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Globe style={{ width: '20px', height: '20px', color: 'white' }} />
+            </div>
+            <div>
+              <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'white', margin: 0 }}>Select Destination City</h3>
+              <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: 0 }}>Top 10 developed cities with tax treaty support</p>
+            </div>
           </div>
-          <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>Top 10 Developed Cities</span>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
-          {topCities.map((city) => (
+        
+        {/* Professional Dropdown Selector */}
+        <div style={{ position: 'relative', marginBottom: '16px' }}>
+          <select
+            value={selectedCity}
+            onChange={(e) => {
+              setSelectedCity(e.target.value);
+              setLetterData(prev => ({ ...prev, propertyAddress: e.target.value }));
+              const city = topCities.find(c => c.name === e.target.value);
+              toast.success(`Switched to ${e.target.value}`, { duration: 2000 });
+            }}
+            style={{
+              width: '100%',
+              padding: '16px 20px',
+              fontSize: '16px',
+              fontWeight: 600,
+              color: 'white',
+              background: 'rgba(0,0,0,0.3)',
+              border: '2px solid rgba(102, 126, 234, 0.4)',
+              borderRadius: '12px',
+              cursor: 'pointer',
+              appearance: 'none',
+              outline: 'none'
+            }}
+          >
+            {topCities.map((city) => (
+              <option key={city.name} value={city.name} style={{ background: '#1a1a2e', color: 'white', padding: '12px' }}>
+                {city.flag} {city.name}
+              </option>
+            ))}
+          </select>
+          <ChevronRight style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%) rotate(90deg)', width: '20px', height: '20px', color: 'rgba(255,255,255,0.5)', pointerEvents: 'none' }} />
+        </div>
+
+        {/* Quick City Pills */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px' }}>
+          {topCities.slice(0, 5).map((city) => (
             <motion.button
               key={city.name}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => {
                 setSelectedCity(city.name);
                 setLetterData(prev => ({ ...prev, propertyAddress: city.name }));
-                toast.success(`Switched to ${city.name}`, { icon: city.flag });
+                toast.success(`Switched to ${city.name}`, { duration: 2000 });
               }}
               style={{
-                padding: '12px 8px',
-                background: selectedCity === city.name ? 'rgba(102, 126, 234, 0.3)' : 'rgba(0,0,0,0.2)',
-                border: selectedCity === city.name ? '2px solid #667eea' : '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '12px',
+                padding: '8px 16px',
+                background: selectedCity === city.name ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'rgba(255,255,255,0.05)',
+                border: selectedCity === city.name ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '20px',
                 cursor: 'pointer',
                 display: 'flex',
-                flexDirection: 'column',
                 alignItems: 'center',
                 gap: '6px',
                 transition: 'all 0.2s'
               }}
             >
-              <span style={{ fontSize: '24px' }}>{city.flag}</span>
-              <span style={{ fontSize: '11px', fontWeight: 600, color: selectedCity === city.name ? '#667eea' : 'white', textAlign: 'center' }}>
+              <span style={{ fontSize: '14px' }}>{city.flag}</span>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: 'white' }}>
                 {city.name.split(',')[0]}
               </span>
             </motion.button>
           ))}
         </div>
-        <div style={{ marginTop: '16px', padding: '12px', background: 'rgba(0,0,0,0.2)', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Shield style={{ width: '18px', height: '18px', color: '#10b981' }} />
-          <div>
-            <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>Active Tax Treaty: </span>
-            <span style={{ fontSize: '13px', fontWeight: 600, color: '#10b981' }}>{currentCityData.treaty}</span>
+
+        {/* Active Treaty Info */}
+        <div style={{ padding: '16px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.2)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <Shield style={{ width: '20px', height: '20px', color: '#10b981' }} />
+          <div style={{ flex: 1 }}>
+            <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>Active Tax Treaty</span>
+            <div style={{ fontSize: '14px', fontWeight: 600, color: '#10b981' }}>{currentCityData.treaty}</div>
+          </div>
+          <div style={{ padding: '6px 12px', background: 'rgba(16, 185, 129, 0.2)', borderRadius: '6px' }}>
+            <span style={{ fontSize: '11px', fontWeight: 600, color: '#10b981' }}>VERIFIED</span>
           </div>
         </div>
       </div>
