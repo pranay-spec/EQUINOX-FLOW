@@ -33,12 +33,29 @@ export function CompliancePack({ location, userProfile }: CompliancePackProps) {
   const [showCredibilityLetter, setShowCredibilityLetter] = useState(false);
   const [previewDoc, setPreviewDoc] = useState<Document | null>(null);
   const [showCustomizeModal, setShowCustomizeModal] = useState(false);
+  const [selectedCity, setSelectedCity] = useState(location || 'Berlin, Germany');
   const [letterData, setLetterData] = useState({
     applicantName: 'John Doe',
     propertyAddress: location,
     landlordName: 'Property Manager',
     additionalNotes: ''
   });
+
+  // Top 10 developed cities for compliance
+  const topCities = [
+    { name: 'Berlin, Germany', flag: '🇩🇪', treaty: 'Germany-US Tax Treaty' },
+    { name: 'Tokyo, Japan', flag: '🇯🇵', treaty: 'Japan-US Tax Treaty' },
+    { name: 'Singapore', flag: '🇸🇬', treaty: 'Singapore-US Tax Treaty' },
+    { name: 'London, UK', flag: '🇬🇧', treaty: 'UK-US Tax Treaty' },
+    { name: 'Amsterdam, Netherlands', flag: '🇳🇱', treaty: 'Netherlands-US Tax Treaty' },
+    { name: 'Zurich, Switzerland', flag: '🇨🇭', treaty: 'Switzerland-US Tax Treaty' },
+    { name: 'Sydney, Australia', flag: '🇦🇺', treaty: 'Australia-US Tax Treaty' },
+    { name: 'Toronto, Canada', flag: '🇨🇦', treaty: 'Canada-US Tax Treaty' },
+    { name: 'Dubai, UAE', flag: '🇦🇪', treaty: 'UAE Tax Regulations' },
+    { name: 'Paris, France', flag: '🇫🇷', treaty: 'France-US Tax Treaty' },
+  ];
+
+  const currentCityData = topCities.find(c => c.name === selectedCity) || topCities[0];
 
   const trustComponents = {
     payment_reliability: 94,
@@ -217,7 +234,7 @@ Status: PRE-FILLED - Ready for Review
 PART I - IDENTIFICATION
 ───────────────────────────────────────────────────────────────
 Name: [Your Name]
-Current Address: ${location}
+Current Address: \
 Country of Citizenship: [Your Country]
 Visa Type: [Your Visa Type]
 
@@ -260,7 +277,7 @@ Treaty Reference: Germany-US Tax Treaty (1989, amended 2006)
 APPLICANT INFORMATION
 ───────────────────────────────────────────────────────────────
 Name: [Your Name]
-Tax Residence: ${location}
+Tax Residence: \
 US Tax ID (if any): [Your TIN]
 German Tax ID: [To be assigned]
 
@@ -300,7 +317,7 @@ PART I - IDENTIFICATION OF BENEFICIAL OWNER
 ───────────────────────────────────────────────────────────────
 1. Name: [Your Name]
 2. Country of citizenship: [Your Country]
-3. Permanent residence address: ${location}
+3. Permanent residence address: \
 4. Mailing address (if different): Same as above
 
 ───────────────────────────────────────────────────────────────
@@ -347,7 +364,7 @@ Passport Number: [Your Passport]
 RESIDENCY STATUS
 ───────────────────────────────────────────────────────────────
 Tax Residence Country: Germany
-Address: ${location}
+Address: \
 Residency Start Date: [Move Date]
 Tax Year: 2025
 
@@ -416,7 +433,7 @@ To Whom It May Concern,
 ───────────────────────────────────────────────────────────────
 
 I am writing to introduce [Applicant Name], who has expressed
-interest in renting your property at ${location}.
+interest in renting your property at \.
 
 While the applicant's income originates from international
 sources, our Zero-Knowledge verification system has confirmed
@@ -490,8 +507,63 @@ AI-Powered Financial Verification System
           One-Click Compliance Pack
         </h2>
         <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '16px', maxWidth: '600px', margin: '0 auto' }}>
-          AI-generated, pre-filled documentation ready for {location}. All forms verified against latest tax treaties.
+          AI-generated, pre-filled documentation ready for {selectedCity}. All forms verified against latest tax treaties.
         </p>
+      </div>
+
+      {/* City Selector */}
+      <div style={{ 
+        background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.05) 100%)',
+        borderRadius: '16px',
+        padding: '20px',
+        border: '1px solid rgba(102, 126, 234, 0.2)',
+        marginBottom: '8px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <Globe style={{ width: '20px', height: '20px', color: '#667eea' }} />
+            <span style={{ fontSize: '14px', fontWeight: 600, color: 'white' }}>Select Destination City</span>
+          </div>
+          <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>Top 10 Developed Cities</span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
+          {topCities.map((city) => (
+            <motion.button
+              key={city.name}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => {
+                setSelectedCity(city.name);
+                setLetterData(prev => ({ ...prev, propertyAddress: city.name }));
+                toast.success(`Switched to ${city.name}`, { icon: city.flag });
+              }}
+              style={{
+                padding: '12px 8px',
+                background: selectedCity === city.name ? 'rgba(102, 126, 234, 0.3)' : 'rgba(0,0,0,0.2)',
+                border: selectedCity === city.name ? '2px solid #667eea' : '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'all 0.2s'
+              }}
+            >
+              <span style={{ fontSize: '24px' }}>{city.flag}</span>
+              <span style={{ fontSize: '11px', fontWeight: 600, color: selectedCity === city.name ? '#667eea' : 'white', textAlign: 'center' }}>
+                {city.name.split(',')[0]}
+              </span>
+            </motion.button>
+          ))}
+        </div>
+        <div style={{ marginTop: '16px', padding: '12px', background: 'rgba(0,0,0,0.2)', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <Shield style={{ width: '18px', height: '18px', color: '#10b981' }} />
+          <div>
+            <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>Active Tax Treaty: </span>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: '#10b981' }}>{currentCityData.treaty}</span>
+          </div>
+        </div>
       </div>
 
       {/* Tabs */}
