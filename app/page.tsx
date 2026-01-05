@@ -163,6 +163,23 @@ export default function Home() {
         'Hyderabad': { wealthMultiplier1: 0.66, wealthMultiplier5: 1.20, riskScore: 0.27, qualityScore: 0.73, costIncrease: 6.2, taxBurden: 30.0, hiddenCosts: 3200, riskLevel: 'Medium' },
         'Chennai, India': { wealthMultiplier1: 0.64, wealthMultiplier5: 1.16, riskScore: 0.28, qualityScore: 0.71, costIncrease: 5.8, taxBurden: 30.0, hiddenCosts: 3000, riskLevel: 'Medium' },
         'Chennai': { wealthMultiplier1: 0.64, wealthMultiplier5: 1.16, riskScore: 0.28, qualityScore: 0.71, costIncrease: 5.8, taxBurden: 30.0, hiddenCosts: 3000, riskLevel: 'Medium' },
+        'Ahmedabad, India': { wealthMultiplier1: 0.67, wealthMultiplier5: 1.18, riskScore: 0.26, qualityScore: 0.72, costIncrease: 5.5, taxBurden: 30.0, hiddenCosts: 2600, riskLevel: 'Medium' },
+        'Ahmedabad': { wealthMultiplier1: 0.67, wealthMultiplier5: 1.18, riskScore: 0.26, qualityScore: 0.72, costIncrease: 5.5, taxBurden: 30.0, hiddenCosts: 2600, riskLevel: 'Medium' },
+        'Kolkata, India': { wealthMultiplier1: 0.62, wealthMultiplier5: 1.12, riskScore: 0.30, qualityScore: 0.68, costIncrease: 4.8, taxBurden: 30.0, hiddenCosts: 2400, riskLevel: 'Medium' },
+        'Kolkata': { wealthMultiplier1: 0.62, wealthMultiplier5: 1.12, riskScore: 0.30, qualityScore: 0.68, costIncrease: 4.8, taxBurden: 30.0, hiddenCosts: 2400, riskLevel: 'Medium' },
+        'Jaipur, India': { wealthMultiplier1: 0.68, wealthMultiplier5: 1.20, riskScore: 0.27, qualityScore: 0.70, costIncrease: 4.5, taxBurden: 30.0, hiddenCosts: 2200, riskLevel: 'Medium' },
+        'Jaipur': { wealthMultiplier1: 0.68, wealthMultiplier5: 1.20, riskScore: 0.27, qualityScore: 0.70, costIncrease: 4.5, taxBurden: 30.0, hiddenCosts: 2200, riskLevel: 'Medium' },
+        'Surat, India': { wealthMultiplier1: 0.70, wealthMultiplier5: 1.22, riskScore: 0.25, qualityScore: 0.71, costIncrease: 4.2, taxBurden: 30.0, hiddenCosts: 2100, riskLevel: 'Medium' },
+        'Surat': { wealthMultiplier1: 0.70, wealthMultiplier5: 1.22, riskScore: 0.25, qualityScore: 0.71, costIncrease: 4.2, taxBurden: 30.0, hiddenCosts: 2100, riskLevel: 'Medium' },
+        'Gurgaon, India': { wealthMultiplier1: 0.69, wealthMultiplier5: 1.24, riskScore: 0.26, qualityScore: 0.74, costIncrease: 7.5, taxBurden: 30.0, hiddenCosts: 3600, riskLevel: 'Medium' },
+        'Gurgaon': { wealthMultiplier1: 0.69, wealthMultiplier5: 1.24, riskScore: 0.26, qualityScore: 0.74, costIncrease: 7.5, taxBurden: 30.0, hiddenCosts: 3600, riskLevel: 'Medium' },
+        'Gurugram, India': { wealthMultiplier1: 0.69, wealthMultiplier5: 1.24, riskScore: 0.26, qualityScore: 0.74, costIncrease: 7.5, taxBurden: 30.0, hiddenCosts: 3600, riskLevel: 'Medium' },
+        'Gurugram': { wealthMultiplier1: 0.69, wealthMultiplier5: 1.24, riskScore: 0.26, qualityScore: 0.74, costIncrease: 7.5, taxBurden: 30.0, hiddenCosts: 3600, riskLevel: 'Medium' },
+        'Noida, India': { wealthMultiplier1: 0.67, wealthMultiplier5: 1.21, riskScore: 0.27, qualityScore: 0.72, costIncrease: 6.8, taxBurden: 30.0, hiddenCosts: 3200, riskLevel: 'Medium' },
+        'Noida': { wealthMultiplier1: 0.67, wealthMultiplier5: 1.21, riskScore: 0.27, qualityScore: 0.72, costIncrease: 6.8, taxBurden: 30.0, hiddenCosts: 3200, riskLevel: 'Medium' },
+        // European cities - Belgium
+        'Antwerp, Belgium': { wealthMultiplier1: 0.87, wealthMultiplier5: 1.55, riskScore: 0.15, qualityScore: 0.91, costIncrease: 9.8, taxBurden: 50.0, hiddenCosts: 9800, riskLevel: 'Low' },
+        'Antwerp': { wealthMultiplier1: 0.87, wealthMultiplier5: 1.55, riskScore: 0.15, qualityScore: 0.91, costIncrease: 9.8, taxBurden: 50.0, hiddenCosts: 9800, riskLevel: 'Low' },
       };
 
       // Get the primary selected city
