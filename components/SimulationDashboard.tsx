@@ -50,7 +50,7 @@ export function SimulationDashboard({ data, onRerun }: SimulationDashboardProps)
     return yearData;
   });
 
-  const chartColors = ['#667eea', '#f093fb', '#10B981'];
+  const chartColors = ['#667eea', '#f093fb', '#10B981', '#f59e0b', '#ef4444', '#06b6d4', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'];
 
   const bestScenario = data.scenarios.reduce((best: any, current: any) => 
     current.year_5_wealth > best.year_5_wealth ? current : best

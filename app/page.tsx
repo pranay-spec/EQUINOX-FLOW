@@ -423,8 +423,8 @@ export default function Home() {
         // Norway additional
         'Bergen, Norway': { wealthMultiplier1: 0.80, wealthMultiplier5: 1.48, riskScore: 0.10, qualityScore: 0.96, costIncrease: 20.5, taxBurden: 46.0, hiddenCosts: 14200, riskLevel: 'Low' },
         'Bergen': { wealthMultiplier1: 0.80, wealthMultiplier5: 1.48, riskScore: 0.10, qualityScore: 0.96, costIncrease: 20.5, taxBurden: 46.0, hiddenCosts: 14200, riskLevel: 'Low' },
-        'Trondheim, Norway': { wealthMultiplier1: 0.81, wealthMultiplier5: 1.50, riskScore: 0.09, qualityScore: 0.97, costIncrease: 19.2, taxBurden: 46.0, hiddenCosts: 13800, riskLevel: 'Low' },
-        'Trondheim': { wealthMultiplier1: 0.81, wealthMultiplier5: 1.50, riskScore: 0.09, qualityScore: 0.97, costIncrease: 19.2, taxBurden: 46.0, hiddenCosts: 13800, riskLevel: 'Low' },
+        'Trondheim, Norway': { wealthMultiplier1: 0.79, wealthMultiplier5: 1.42, riskScore: 0.09, qualityScore: 0.97, costIncrease: 19.2, taxBurden: 46.0, hiddenCosts: 13800, riskLevel: 'Low' },
+        'Trondheim': { wealthMultiplier1: 0.79, wealthMultiplier5: 1.42, riskScore: 0.09, qualityScore: 0.97, costIncrease: 19.2, taxBurden: 46.0, hiddenCosts: 13800, riskLevel: 'Low' },
         // Austria additional
         'Salzburg, Austria': { wealthMultiplier1: 0.86, wealthMultiplier5: 1.58, riskScore: 0.12, qualityScore: 0.95, costIncrease: 12.5, taxBurden: 42.0, hiddenCosts: 10500, riskLevel: 'Low' },
         'Salzburg': { wealthMultiplier1: 0.86, wealthMultiplier5: 1.58, riskScore: 0.12, qualityScore: 0.95, costIncrease: 12.5, taxBurden: 42.0, hiddenCosts: 10500, riskLevel: 'Low' },
@@ -445,8 +445,8 @@ export default function Home() {
         // Italy additional
         'Naples, Italy': { wealthMultiplier1: 0.90, wealthMultiplier5: 1.58, riskScore: 0.28, qualityScore: 0.80, costIncrease: 6.5, taxBurden: 43.0, hiddenCosts: 7800, riskLevel: 'Medium' },
         'Naples': { wealthMultiplier1: 0.90, wealthMultiplier5: 1.58, riskScore: 0.28, qualityScore: 0.80, costIncrease: 6.5, taxBurden: 43.0, hiddenCosts: 7800, riskLevel: 'Medium' },
-        'Turin, Italy': { wealthMultiplier1: 0.87, wealthMultiplier5: 1.52, riskScore: 0.22, qualityScore: 0.86, costIncrease: 9.8, taxBurden: 43.0, hiddenCosts: 9200, riskLevel: 'Medium' },
-        'Turin': { wealthMultiplier1: 0.87, wealthMultiplier5: 1.52, riskScore: 0.22, qualityScore: 0.86, costIncrease: 9.8, taxBurden: 43.0, hiddenCosts: 9200, riskLevel: 'Medium' },
+        'Turin, Italy': { wealthMultiplier1: 0.92, wealthMultiplier5: 1.68, riskScore: 0.22, qualityScore: 0.86, costIncrease: 9.8, taxBurden: 43.0, hiddenCosts: 9200, riskLevel: 'Medium' },
+        'Turin': { wealthMultiplier1: 0.92, wealthMultiplier5: 1.68, riskScore: 0.22, qualityScore: 0.86, costIncrease: 9.8, taxBurden: 43.0, hiddenCosts: 9200, riskLevel: 'Medium' },
         'Florence, Italy': { wealthMultiplier1: 0.84, wealthMultiplier5: 1.48, riskScore: 0.20, qualityScore: 0.90, costIncrease: 14.5, taxBurden: 43.0, hiddenCosts: 11500, riskLevel: 'Low' },
         'Florence': { wealthMultiplier1: 0.84, wealthMultiplier5: 1.48, riskScore: 0.20, qualityScore: 0.90, costIncrease: 14.5, taxBurden: 43.0, hiddenCosts: 11500, riskLevel: 'Low' },
         // France additional
