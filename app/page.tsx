@@ -94,49 +94,28 @@ export default function Home() {
             return key;
           }
         }
-        return 'London, UK'; // Default fallback
+        // If no match found, return the input as-is with default data
+        return cityName;
       };
 
-      const primaryCityKey = findCityKey(primaryCity);
-      
-      // Get comparison cities (exclude the primary city)
-      const allCities = Object.keys(cityData).filter(city => city !== primaryCityKey);
-      
-      // Select 2 relevant comparison cities based on region/characteristics
-      const getComparisonCities = (primary: string): string[] => {
-        const asianCities = ['Singapore', 'Tokyo, Japan', 'Hong Kong', 'Seoul, South Korea'];
-        const europeanCities = ['Berlin, Germany', 'London, UK', 'Amsterdam, Netherlands', 'Lisbon, Portugal', 'Paris, France', 'Zurich, Switzerland', 'Barcelona, Spain'];
-        const americanCities = ['New York, USA', 'Toronto, Canada'];
-        const otherCities = ['Dubai, UAE', 'Sydney, Australia'];
-        
-        let comparisons: string[] = [];
-        
-        if (asianCities.includes(primary)) {
-          // If Asian city, compare with 1 European and 1 other Asian
-          comparisons = [
-            europeanCities.find(c => c !== primary) || 'Berlin, Germany',
-            asianCities.find(c => c !== primary) || 'Tokyo, Japan'
-          ];
-        } else if (europeanCities.includes(primary)) {
-          // If European city, compare with 1 Asian and 1 other European
-          comparisons = [
-            asianCities[0] || 'Singapore',
-            europeanCities.find(c => c !== primary) || 'Amsterdam, Netherlands'
-          ];
-        } else {
-          // Default comparisons
-          comparisons = ['Berlin, Germany', 'Singapore'];
-        }
-        
-        // Make sure we don't duplicate the primary city
-        return comparisons.filter(c => c !== primary).slice(0, 2);
-      };
-
-      const comparisonCities = getComparisonCities(primaryCityKey);
+      // Use ALL user-selected cities instead of auto-generating comparisons
+      const userSelectedCities = formData.target_locations
+        .filter((loc: string) => loc && loc.trim() !== '')
+        .map((loc: string) => findCityKey(loc));
       
       // Build scenarios with actual city data
       const buildScenario = (cityKey: string, salary: number) => {
-        const data = cityData[cityKey] || cityData['London, UK'];
+        // Try to find city data, or generate reasonable defaults
+        const data = cityData[cityKey] || {
+          wealthMultiplier1: 0.85,
+          wealthMultiplier5: 1.50,
+          riskScore: 0.20,
+          qualityScore: 0.85,
+          costIncrease: 15.0,
+          taxBurden: 30.0,
+          hiddenCosts: 12000,
+          riskLevel: 'Medium'
+        };
         return {
           location: cityKey,
           year_1_wealth: salary * data.wealthMultiplier1,
@@ -150,16 +129,17 @@ export default function Home() {
         };
       };
 
-      const scenarios = [
-        buildScenario(primaryCityKey, formData.current_salary),
-        buildScenario(comparisonCities[0], formData.current_salary),
-        buildScenario(comparisonCities[1], formData.current_salary)
-      ];
+      // Build scenarios for ALL user-selected cities
+      const scenarios = userSelectedCities.map((city: string) => 
+        buildScenario(city, formData.current_salary)
+      );
 
       // Find the best city for recommendations
-      const bestCity = scenarios.reduce((best, current) => 
+      const bestCity = scenarios.reduce((best: any, current: any) => 
         current.year_5_wealth > best.year_5_wealth ? current : best
       );
+
+      const primaryCityKey = userSelectedCities[0] || 'London, UK';
 
       const mockResult = {
         scenarios,
