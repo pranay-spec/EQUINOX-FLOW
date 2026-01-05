@@ -69,14 +69,18 @@ export default function Home() {
         'Singapore': { wealthMultiplier1: 0.82, wealthMultiplier5: 1.58, riskScore: 0.12, qualityScore: 0.95, costIncrease: 22.1, taxBurden: 18.5, hiddenCosts: 15200, riskLevel: 'Low' },
         'Berlin, Germany': { wealthMultiplier1: 0.92, wealthMultiplier5: 1.62, riskScore: 0.18, qualityScore: 0.91, costIncrease: 8.7, taxBurden: 38.2, hiddenCosts: 9600, riskLevel: 'Low' },
         'Tokyo, Japan': { wealthMultiplier1: 0.78, wealthMultiplier5: 1.48, riskScore: 0.15, qualityScore: 0.93, costIncrease: 18.5, taxBurden: 28.5, hiddenCosts: 14200, riskLevel: 'Low' },
-        'London, UK': { wealthMultiplier1: 0.85, wealthMultiplier5: 1.45, riskScore: 0.25, qualityScore: 0.88, costIncrease: 15.2, taxBurden: 32.5, hiddenCosts: 12800, riskLevel: 'Medium' },
+        'Tokyo': { wealthMultiplier1: 0.78, wealthMultiplier5: 1.48, riskScore: 0.15, qualityScore: 0.93, costIncrease: 18.5, taxBurden: 28.5, hiddenCosts: 14200, riskLevel: 'Low' },
+        'London, UK': { wealthMultiplier1: 0.85, wealthMultiplier5: 1.52, riskScore: 0.22, qualityScore: 0.88, costIncrease: 15.2, taxBurden: 32.5, hiddenCosts: 12800, riskLevel: 'Medium' },
+        'London': { wealthMultiplier1: 0.85, wealthMultiplier5: 1.52, riskScore: 0.22, qualityScore: 0.88, costIncrease: 15.2, taxBurden: 32.5, hiddenCosts: 12800, riskLevel: 'Medium' },
         'New York, USA': { wealthMultiplier1: 0.80, wealthMultiplier5: 1.55, riskScore: 0.22, qualityScore: 0.86, costIncrease: 25.8, taxBurden: 35.2, hiddenCosts: 18500, riskLevel: 'Medium' },
+        'New York': { wealthMultiplier1: 0.80, wealthMultiplier5: 1.55, riskScore: 0.22, qualityScore: 0.86, costIncrease: 25.8, taxBurden: 35.2, hiddenCosts: 18500, riskLevel: 'Medium' },
         'Dubai, UAE': { wealthMultiplier1: 0.88, wealthMultiplier5: 1.72, riskScore: 0.20, qualityScore: 0.84, costIncrease: 12.5, taxBurden: 5.0, hiddenCosts: 11000, riskLevel: 'Medium' },
         'Amsterdam, Netherlands': { wealthMultiplier1: 0.90, wealthMultiplier5: 1.58, riskScore: 0.16, qualityScore: 0.92, costIncrease: 10.2, taxBurden: 42.5, hiddenCosts: 8800, riskLevel: 'Low' },
         'Sydney, Australia': { wealthMultiplier1: 0.84, wealthMultiplier5: 1.52, riskScore: 0.14, qualityScore: 0.94, costIncrease: 19.8, taxBurden: 32.0, hiddenCosts: 13500, riskLevel: 'Low' },
         'Toronto, Canada': { wealthMultiplier1: 0.88, wealthMultiplier5: 1.55, riskScore: 0.17, qualityScore: 0.90, costIncrease: 14.5, taxBurden: 33.8, hiddenCosts: 10200, riskLevel: 'Low' },
         'Lisbon, Portugal': { wealthMultiplier1: 0.94, wealthMultiplier5: 1.68, riskScore: 0.19, qualityScore: 0.87, costIncrease: 5.2, taxBurden: 28.0, hiddenCosts: 7500, riskLevel: 'Low' },
-        'Paris, France': { wealthMultiplier1: 0.82, wealthMultiplier5: 1.42, riskScore: 0.24, qualityScore: 0.89, costIncrease: 20.5, taxBurden: 45.0, hiddenCosts: 14800, riskLevel: 'Medium' },
+        'Paris, France': { wealthMultiplier1: 0.78, wealthMultiplier5: 1.32, riskScore: 0.26, qualityScore: 0.91, costIncrease: 24.5, taxBurden: 48.0, hiddenCosts: 16800, riskLevel: 'Medium' },
+        'Paris': { wealthMultiplier1: 0.78, wealthMultiplier5: 1.32, riskScore: 0.26, qualityScore: 0.91, costIncrease: 24.5, taxBurden: 48.0, hiddenCosts: 16800, riskLevel: 'Medium' },
         'Zurich, Switzerland': { wealthMultiplier1: 0.75, wealthMultiplier5: 1.65, riskScore: 0.10, qualityScore: 0.97, costIncrease: 35.2, taxBurden: 22.0, hiddenCosts: 16500, riskLevel: 'Low' },
         'Hong Kong': { wealthMultiplier1: 0.79, wealthMultiplier5: 1.52, riskScore: 0.23, qualityScore: 0.85, costIncrease: 28.5, taxBurden: 15.0, hiddenCosts: 17200, riskLevel: 'Medium' },
         'Seoul, South Korea': { wealthMultiplier1: 0.86, wealthMultiplier5: 1.56, riskScore: 0.16, qualityScore: 0.91, costIncrease: 12.8, taxBurden: 26.5, hiddenCosts: 11800, riskLevel: 'Low' },
@@ -385,14 +389,32 @@ export default function Home() {
       // Get the primary selected city
       const primaryCity = formData.target_locations[0] || 'London, UK';
       
-      // Find the best matching city key
+      // Find the best matching city key - IMPROVED matching
       const findCityKey = (cityName: string): string => {
         const normalizedInput = cityName.toLowerCase().trim();
+        
+        // First try exact match
+        for (const key of Object.keys(cityData)) {
+          if (key.toLowerCase() === normalizedInput) {
+            return key;
+          }
+        }
+        
+        // Then try if input starts with city name (e.g., "Paris" matches "Paris, France")
+        for (const key of Object.keys(cityData)) {
+          const cityPart = key.toLowerCase().split(',')[0].trim();
+          if (cityPart === normalizedInput) {
+            return key;
+          }
+        }
+        
+        // Then try partial match
         for (const key of Object.keys(cityData)) {
           if (key.toLowerCase().includes(normalizedInput) || normalizedInput.includes(key.toLowerCase().split(',')[0])) {
             return key;
           }
         }
+        
         // If no match found, return the input as-is with default data
         return cityName;
       };
@@ -401,6 +423,9 @@ export default function Home() {
       const userSelectedCities = formData.target_locations
         .filter((loc: string) => loc && loc.trim() !== '')
         .map((loc: string) => findCityKey(loc));
+      
+      // Remove duplicates while preserving order
+      const uniqueCities = [...new Set(userSelectedCities)];
       
       // Build scenarios with actual city data
       const buildScenario = (cityKey: string, salary: number) => {
@@ -429,7 +454,7 @@ export default function Home() {
       };
 
       // Build scenarios for ALL user-selected cities
-      const scenarios = userSelectedCities.map((city: string) => 
+      const scenarios = uniqueCities.map((city: string) => 
         buildScenario(city, formData.current_salary)
       );
 
