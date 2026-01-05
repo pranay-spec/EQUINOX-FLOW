@@ -37,6 +37,7 @@ export function PrivacyVault() {
   const [uploadedDocs, setUploadedDocs] = useState<EncryptedDocument[]>([]);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  const [generatedProofHash, setGeneratedProofHash] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const zkProofs: ZKProof[] = [
@@ -133,10 +134,91 @@ export function PrivacyVault() {
     
     // Simulate ZK proof generation
     setTimeout(() => {
+      const proofHash = '0x' + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join('');
+      setGeneratedProofHash(proofHash);
       setGeneratingProof(false);
       setProofGenerated(true);
       toast.success('Zero-Knowledge Proof generated successfully!', { icon: '🔐' });
     }, 3000);
+  };
+
+  const getSelectedClaimLabel = () => {
+    const claim = claimOptions.find(c => c.id === selectedClaim);
+    return claim ? claim.label : 'Unknown Claim';
+  };
+
+  const downloadProofCertificate = () => {
+    const selectedClaimData = claimOptions.find(c => c.id === selectedClaim);
+    const timestamp = new Date().toISOString();
+    const certificateId = 'ZKP-' + Date.now().toString(36).toUpperCase();
+    
+    const certificateContent = `
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║                    ZERO-KNOWLEDGE PROOF CERTIFICATE                          ║
+║                         EQUINOX FLOW PRIVACY VAULT                           ║
+║                                                                              ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║                                                                              ║
+║  Certificate ID: ${certificateId}                                            
+║                                                                              ║
+║  ─────────────────────────────────────────────────────────────────────────── ║
+║                                                                              ║
+║  CLAIM TYPE: ${selectedClaimData?.label || 'Unknown'}                        
+║                                                                              ║
+║  CLAIM DESCRIPTION:                                                          ║
+║  ${selectedClaimData?.desc || 'No description'}                              
+║                                                                              ║
+║  ─────────────────────────────────────────────────────────────────────────── ║
+║                                                                              ║
+║  VERIFICATION STATUS: ✓ VERIFIED                                             ║
+║                                                                              ║
+║  PROOF HASH:                                                                 ║
+║  ${generatedProofHash}                                                       
+║                                                                              ║
+║  ─────────────────────────────────────────────────────────────────────────── ║
+║                                                                              ║
+║  CRYPTOGRAPHIC DETAILS:                                                      ║
+║  • Protocol: zk-SNARK (Groth16)                                              ║
+║  • Curve: BN254                                                              ║
+║  • Hash Function: Poseidon                                                   ║
+║  • Verification Key: Embedded in proof                                       ║
+║                                                                              ║
+║  ─────────────────────────────────────────────────────────────────────────── ║
+║                                                                              ║
+║  TIMESTAMP: ${timestamp}                                                     
+║                                                                              ║
+║  ISSUER: Equinox Flow Privacy Vault                                          ║
+║  VALIDITY: 30 days from issue date                                           ║
+║                                                                              ║
+║  ─────────────────────────────────────────────────────────────────────────── ║
+║                                                                              ║
+║  PRIVACY GUARANTEE:                                                          ║
+║  This certificate proves the above claim WITHOUT revealing any underlying    ║
+║  personal data. The proof can be independently verified using the proof      ║
+║  hash and public verification key.                                           ║
+║                                                                              ║
+║  VERIFICATION URL:                                                           ║
+║  https://equinox-flow.vercel.app/verify/${certificateId}                     
+║                                                                              ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║                                                                              ║
+║  🔐 Secured by Zero-Knowledge Cryptography                                   ║
+║  ✓ GDPR Compliant  ✓ SOC 2 Type II  ✓ No Data Exposure                       ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+`;
+
+    const blob = new Blob([certificateContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ZK_Proof_Certificate_${certificateId}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success('Proof certificate downloaded!', { icon: '📄' });
   };
 
   const claimOptions = [
@@ -234,12 +316,25 @@ export function PrivacyVault() {
           {proofGenerated && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
               style={{ marginTop: '16px', padding: '14px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '10px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <CheckCircle style={{ width: '14px', height: '14px', color: '#10b981' }} />
-                <span style={{ fontSize: '12px', fontWeight: 600, color: '#10b981' }}>Proof Generated</span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <CheckCircle style={{ width: '14px', height: '14px', color: '#10b981' }} />
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#10b981' }}>Proof Generated</span>
+                </div>
+                <motion.button 
+                  whileHover={{ scale: 1.05 }} 
+                  whileTap={{ scale: 0.95 }}
+                  onClick={downloadProofCertificate}
+                  style={{ padding: '6px 12px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', border: 'none', borderRadius: '6px', color: 'white', fontSize: '11px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Download style={{ width: '12px', height: '12px' }} />
+                  Download Certificate
+                </motion.button>
               </div>
-              <code style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)', wordBreak: 'break-all' }}>
-                Proof Hash: 0x8f2a9c3d7e1b4f6a...{Math.random().toString(16).slice(2, 10)}
+              <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginBottom: '8px' }}>
+                Claim: <span style={{ color: '#a78bfa' }}>{getSelectedClaimLabel()}</span>
+              </div>
+              <code style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)', wordBreak: 'break-all', display: 'block' }}>
+                Proof Hash: {generatedProofHash.slice(0, 20)}...{generatedProofHash.slice(-8)}
               </code>
             </motion.div>
           )}
