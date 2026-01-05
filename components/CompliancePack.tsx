@@ -41,18 +41,18 @@ export function CompliancePack({ location, userProfile }: CompliancePackProps) {
     additionalNotes: ''
   });
 
-  // Top 10 developed cities for compliance
+  // Top 10 developed cities for compliance with detailed tax info
   const topCities = [
-    { name: 'Berlin, Germany', flag: '🇩🇪', treaty: 'Germany-US Tax Treaty' },
-    { name: 'Tokyo, Japan', flag: '🇯🇵', treaty: 'Japan-US Tax Treaty' },
-    { name: 'Singapore', flag: '🇸🇬', treaty: 'Singapore-US Tax Treaty' },
-    { name: 'London, UK', flag: '🇬🇧', treaty: 'UK-US Tax Treaty' },
-    { name: 'Amsterdam, Netherlands', flag: '🇳🇱', treaty: 'Netherlands-US Tax Treaty' },
-    { name: 'Zurich, Switzerland', flag: '🇨🇭', treaty: 'Switzerland-US Tax Treaty' },
-    { name: 'Sydney, Australia', flag: '🇦🇺', treaty: 'Australia-US Tax Treaty' },
-    { name: 'Toronto, Canada', flag: '🇨🇦', treaty: 'Canada-US Tax Treaty' },
-    { name: 'Dubai, UAE', flag: '🇦🇪', treaty: 'UAE Tax Regulations' },
-    { name: 'Paris, France', flag: '🇫🇷', treaty: 'France-US Tax Treaty' },
+    { name: 'Berlin, Germany', flag: '🇩🇪', treaty: 'Germany-US Tax Treaty', country: 'Germany', taxId: 'German Tax ID (Steuer-ID)', currency: 'EUR', taxRate: '42%', treatyBenefit: '15% relief on dividends' },
+    { name: 'Tokyo, Japan', flag: '🇯🇵', treaty: 'Japan-US Tax Treaty', country: 'Japan', taxId: 'My Number', currency: 'JPY', taxRate: '45%', treatyBenefit: '10% relief on interest' },
+    { name: 'Singapore', flag: '🇸🇬', treaty: 'Singapore-US Tax Treaty', country: 'Singapore', taxId: 'NRIC/FIN', currency: 'SGD', taxRate: '22%', treatyBenefit: '15% relief on royalties' },
+    { name: 'London, UK', flag: '🇬🇧', treaty: 'UK-US Tax Treaty', country: 'United Kingdom', taxId: 'National Insurance Number', currency: 'GBP', taxRate: '45%', treatyBenefit: '15% relief on dividends' },
+    { name: 'Amsterdam, Netherlands', flag: '🇳🇱', treaty: 'Netherlands-US Tax Treaty', country: 'Netherlands', taxId: 'BSN (Burgerservicenummer)', currency: 'EUR', taxRate: '49.5%', treatyBenefit: '15% relief on dividends' },
+    { name: 'Zurich, Switzerland', flag: '🇨🇭', treaty: 'Switzerland-US Tax Treaty', country: 'Switzerland', taxId: 'AHV Number', currency: 'CHF', taxRate: '40%', treatyBenefit: '15% relief on dividends' },
+    { name: 'Sydney, Australia', flag: '🇦🇺', treaty: 'Australia-US Tax Treaty', country: 'Australia', taxId: 'Tax File Number (TFN)', currency: 'AUD', taxRate: '45%', treatyBenefit: '15% relief on dividends' },
+    { name: 'Toronto, Canada', flag: '🇨🇦', treaty: 'Canada-US Tax Treaty', country: 'Canada', taxId: 'Social Insurance Number (SIN)', currency: 'CAD', taxRate: '53.53%', treatyBenefit: '15% relief on dividends' },
+    { name: 'Dubai, UAE', flag: '🇦🇪', treaty: 'UAE Tax Regulations', country: 'UAE', taxId: 'Emirates ID', currency: 'AED', taxRate: '0%', treatyBenefit: 'No income tax' },
+    { name: 'Paris, France', flag: '🇫🇷', treaty: 'France-US Tax Treaty', country: 'France', taxId: 'Numéro Fiscal', currency: 'EUR', taxRate: '45%', treatyBenefit: '15% relief on dividends' },
   ];
 
   const currentCityData = topCities.find(c => c.name === selectedCity) || topCities[0];
@@ -77,13 +77,14 @@ export function CompliancePack({ location, userProfile }: CompliancePackProps) {
     return () => clearTimeout(timer);
   }, []);
 
+  // Dynamic documents based on selected city
   const documents: Document[] = [
-    { id: 'form1040nr', name: 'Form 1040-NR (Pre-filled)', type: 'US Tax', status: 'ready', description: 'Non-resident alien income tax return with your data pre-populated', icon: FileText, color: '#10b981' },
-    { id: 'dtaa', name: 'DTAA Relief Application', type: 'Tax Treaty', status: 'ready', description: 'Double Taxation Avoidance Agreement claim form for Germany-US treaty', icon: Globe, color: '#3b82f6' },
-    { id: 'w8ben', name: 'Form W-8BEN', type: 'Withholding', status: 'ready', description: 'Certificate of foreign status for US tax withholding', icon: Shield, color: '#8b5cf6' },
-    { id: 'residency', name: 'Tax Residency Certificate', type: 'Certification', status: 'generating', description: 'Official proof of tax residency status', icon: Award, color: '#f59e0b' },
-    { id: 'income_proof', name: 'Verified Income Statement', type: 'Financial', status: 'ready', description: 'Blockchain-verified income documentation', icon: CreditCard, color: '#ec4899' },
-    { id: 'credibility', name: 'Financial Credibility Letter', type: 'Negotiation', status: 'ready', description: 'AI-generated letter for landlords/banks explaining your financial profile', icon: Building, color: '#06b6d4' },
+    { id: 'form1040nr', name: 'Form 1040-NR (Pre-filled)', type: 'US Tax', status: 'ready', description: `Non-resident alien income tax return for ${currentCityData.country} residents`, icon: FileText, color: '#10b981' },
+    { id: 'dtaa', name: `DTAA Relief - ${currentCityData.country}`, type: 'Tax Treaty', status: 'ready', description: `Double Taxation Avoidance Agreement claim form for ${currentCityData.treaty}`, icon: Globe, color: '#3b82f6' },
+    { id: 'w8ben', name: 'Form W-8BEN', type: 'Withholding', status: 'ready', description: `Certificate of foreign status for ${currentCityData.country} tax withholding`, icon: Shield, color: '#8b5cf6' },
+    { id: 'residency', name: `${currentCityData.country} Tax Residency Certificate`, type: 'Certification', status: 'ready', description: `Official proof of tax residency in ${currentCityData.country}`, icon: Award, color: '#f59e0b' },
+    { id: 'income_proof', name: 'Verified Income Statement', type: 'Financial', status: 'ready', description: `Blockchain-verified income documentation in ${currentCityData.currency}`, icon: CreditCard, color: '#ec4899' },
+    { id: 'credibility', name: 'Financial Credibility Letter', type: 'Negotiation', status: 'ready', description: `AI-generated letter for ${selectedCity} landlords/banks`, icon: Building, color: '#06b6d4' },
   ];
 
   const handleDownload = (doc: Document) => {
@@ -219,27 +220,32 @@ AI-Powered Financial Verification System
 
   const generateDocumentContent = (doc: Document) => {
     const date = new Date().toLocaleDateString();
+    const city = currentCityData;
+    
     const templates: { [key: string]: string } = {
       form1040nr: `
 ═══════════════════════════════════════════════════════════════
                     FORM 1040-NR (Pre-filled)
               U.S. Nonresident Alien Income Tax Return
+                    For ${city.country} Residents
 ═══════════════════════════════════════════════════════════════
 
 Tax Year: 2025
 Generated: ${date}
+Destination Country: ${city.country}
 Status: PRE-FILLED - Ready for Review
 
 ───────────────────────────────────────────────────────────────
 PART I - IDENTIFICATION
 ───────────────────────────────────────────────────────────────
 Name: [Your Name]
-Current Address: \
-Country of Citizenship: [Your Country]
+Current Address: ${selectedCity}
+Country of Tax Residence: ${city.country}
+Local Tax ID Type: ${city.taxId}
 Visa Type: [Your Visa Type]
 
 ───────────────────────────────────────────────────────────────
-PART II - INCOME
+PART II - INCOME (Converted to ${city.currency})
 ───────────────────────────────────────────────────────────────
 Line 1a - Wages, salaries, tips: $95,000.00
 Line 2a - Tax-exempt interest: $0.00
@@ -251,85 +257,113 @@ PART III - TAX COMPUTATION
 ───────────────────────────────────────────────────────────────
 Taxable Income: $78,500.00
 Tax (from Tax Table): $12,847.00
-Tax Treaty Benefits Applied: -$1,927.05 (15% relief)
+${city.treaty} Benefits Applied: ${city.treatyBenefit}
+Estimated Tax Relief: -$1,927.05
 Total Tax Due: $10,919.95
+
+───────────────────────────────────────────────────────────────
+${city.country.toUpperCase()} TAX IMPLICATIONS
+───────────────────────────────────────────────────────────────
+Local Tax Rate: ${city.taxRate}
+Treaty Benefits: ${city.treatyBenefit}
+Local Tax ID Required: ${city.taxId}
 
 ───────────────────────────────────────────────────────────────
 CERTIFICATION
 ───────────────────────────────────────────────────────────────
-This form has been pre-filled using verified financial data.
+This form has been pre-filled for ${city.country} tax residents.
 Please review all information before filing.
 
 Generated by Equinox Flow Compliance Engine
-Document ID: EQ-1040NR-${Date.now()}
+Document ID: EQ-1040NR-${city.country.substring(0,2).toUpperCase()}-${Date.now()}
       `,
       dtaa: `
 ═══════════════════════════════════════════════════════════════
               DTAA RELIEF APPLICATION FORM
         Double Taxation Avoidance Agreement Claim
-              Germany-United States Treaty
+                    ${city.treaty}
 ═══════════════════════════════════════════════════════════════
 
 Application Date: ${date}
-Treaty Reference: Germany-US Tax Treaty (1989, amended 2006)
+Treaty Reference: ${city.treaty}
+Destination: ${selectedCity}
 
 ───────────────────────────────────────────────────────────────
 APPLICANT INFORMATION
 ───────────────────────────────────────────────────────────────
 Name: [Your Name]
-Tax Residence: \
+Tax Residence: ${selectedCity}
 US Tax ID (if any): [Your TIN]
-German Tax ID: [To be assigned]
+${city.country} Tax ID (${city.taxId}): [To be assigned]
 
 ───────────────────────────────────────────────────────────────
 TREATY BENEFITS CLAIMED
 ───────────────────────────────────────────────────────────────
 Article 15 - Income from Employment
   → Relief on employment income during transition period
-  → Estimated benefit: $8,400/year
+  → Treaty: ${city.treaty}
+  → Benefit: ${city.treatyBenefit}
+  → Estimated annual benefit: $8,400/year
 
 Article 23 - Relief from Double Taxation
   → Credit method for US taxes paid
-  → Prevents taxation in both jurisdictions
+  → Prevents taxation in both US and ${city.country}
+
+───────────────────────────────────────────────────────────────
+${city.country.toUpperCase()} SPECIFIC REQUIREMENTS
+───────────────────────────────────────────────────────────────
+Local Tax Rate: ${city.taxRate}
+Currency: ${city.currency}
+Required ID: ${city.taxId}
 
 ───────────────────────────────────────────────────────────────
 SUPPORTING DOCUMENTS ATTACHED
 ───────────────────────────────────────────────────────────────
-☑ Certificate of Tax Residence
+☑ Certificate of Tax Residence (${city.country})
 ☑ Employment Contract
 ☑ US Tax Returns (last 2 years)
-☑ Proof of German Address
+☑ Proof of ${selectedCity} Address
+☑ ${city.taxId} Application (if applicable)
 
 Generated by Equinox Flow Compliance Engine
-Document ID: EQ-DTAA-${Date.now()}
+Document ID: EQ-DTAA-${city.country.substring(0,2).toUpperCase()}-${Date.now()}
       `,
       w8ben: `
 ═══════════════════════════════════════════════════════════════
                       FORM W-8BEN
        Certificate of Foreign Status of Beneficial Owner
             for United States Tax Withholding
+              (${city.country} Resident Version)
 ═══════════════════════════════════════════════════════════════
 
 Generated: ${date}
+For: ${city.country} Tax Residents
 
 ───────────────────────────────────────────────────────────────
 PART I - IDENTIFICATION OF BENEFICIAL OWNER
 ───────────────────────────────────────────────────────────────
 1. Name: [Your Name]
-2. Country of citizenship: [Your Country]
-3. Permanent residence address: \
+2. Country of citizenship: ${city.country}
+3. Permanent residence address: ${selectedCity}
 4. Mailing address (if different): Same as above
 
 ───────────────────────────────────────────────────────────────
 PART II - CLAIM OF TAX TREATY BENEFITS
 ───────────────────────────────────────────────────────────────
 9a. I certify that the beneficial owner is a resident of:
-    Germany (Treaty Country)
+    ${city.country} (Treaty Country)
 
-9b. Special rates and conditions:
-    Article 12 - Royalties: 0% withholding
-    Article 11 - Interest: 0% withholding
-    Article 10 - Dividends: 15% withholding
+9b. Special rates and conditions (${city.treaty}):
+    Article 12 - Royalties: ${city.treatyBenefit}
+    Article 11 - Interest: Reduced withholding
+    Article 10 - Dividends: ${city.treatyBenefit}
+
+───────────────────────────────────────────────────────────────
+${city.country.toUpperCase()} TAX INFORMATION
+───────────────────────────────────────────────────────────────
+Local Tax ID Type: ${city.taxId}
+Local Tax Rate: ${city.taxRate}
+Currency: ${city.currency}
 
 ───────────────────────────────────────────────────────────────
 CERTIFICATION
@@ -341,14 +375,15 @@ and belief it is true, correct, and complete.
 Signature: _________________________ Date: ${date}
 
 Generated by Equinox Flow Compliance Engine
-Document ID: EQ-W8BEN-${Date.now()}
+Document ID: EQ-W8BEN-${city.country.substring(0,2).toUpperCase()}-${Date.now()}
       `,
       residency: `
 ═══════════════════════════════════════════════════════════════
               TAX RESIDENCY CERTIFICATE
+                    ${city.country}
 ═══════════════════════════════════════════════════════════════
 
-Certificate Number: TRC-${Date.now()}
+Certificate Number: TRC-${city.country.substring(0,2).toUpperCase()}-${Date.now()}
 Issue Date: ${date}
 Valid Until: ${new Date(Date.now() + 365*24*60*60*1000).toLocaleDateString()}
 
@@ -363,84 +398,121 @@ Passport Number: [Your Passport]
 ───────────────────────────────────────────────────────────────
 RESIDENCY STATUS
 ───────────────────────────────────────────────────────────────
-Tax Residence Country: Germany
-Address: \
+Tax Residence Country: ${city.country}
+City: ${selectedCity}
+Address: [Your Address in ${selectedCity}]
 Residency Start Date: [Move Date]
 Tax Year: 2025
+
+───────────────────────────────────────────────────────────────
+${city.country.toUpperCase()} TAX DETAILS
+───────────────────────────────────────────────────────────────
+Local Tax ID Type: ${city.taxId}
+Tax Rate: ${city.taxRate}
+Currency: ${city.currency}
+Applicable Treaty: ${city.treaty}
 
 ───────────────────────────────────────────────────────────────
 CERTIFICATION
 ───────────────────────────────────────────────────────────────
 This is to certify that the above-named individual is a
-tax resident of Germany for the purposes of the Double
-Taxation Agreement between Germany and the United States.
+tax resident of ${city.country} for the tax year 2025.
 
-This certificate is issued for tax treaty purposes only.
+This certificate is issued for the purpose of claiming
+benefits under the ${city.treaty}.
+
+Issuing Authority: ${city.country} Tax Authority
+Verification Code: ${Math.random().toString(36).substring(2, 10).toUpperCase()}
 
 Generated by Equinox Flow Compliance Engine
+Document ID: EQ-TRC-${city.country.substring(0,2).toUpperCase()}-${Date.now()}
       `,
       income_proof: `
 ═══════════════════════════════════════════════════════════════
-            VERIFIED INCOME STATEMENT
-         Blockchain-Verified Documentation
+              VERIFIED INCOME STATEMENT
+           Blockchain-Verified Documentation
+                For ${city.country} Authorities
 ═══════════════════════════════════════════════════════════════
 
+Statement Date: ${date}
 Verification ID: VIS-${Date.now()}
-Generated: ${date}
-Blockchain Hash: 0x7f83b...e4d2a
+Destination: ${selectedCity}
 
 ───────────────────────────────────────────────────────────────
-INCOME VERIFICATION
+INCOME HOLDER
 ───────────────────────────────────────────────────────────────
-Verified Annual Income: $95,000.00 USD
-Income Source: Employment
-Employer: [Employer Name]
-Employment Status: Full-time
-Tenure: 36+ months
+Name: [Your Name]
+Current Location: [Your Current City]
+Target Location: ${selectedCity}
+${city.taxId}: [To be assigned upon arrival]
 
 ───────────────────────────────────────────────────────────────
-MONTHLY BREAKDOWN (Last 12 Months)
+VERIFIED INCOME (Last 12 Months)
 ───────────────────────────────────────────────────────────────
-Average Monthly: $7,916.67
-Highest Month: $8,500.00 (December - Bonus)
-Lowest Month: $7,916.67
-Consistency Score: 98.5%
+Currency: USD (with ${city.currency} equivalent)
+
+Month         USD Amount    ${city.currency} Equivalent
+─────────────────────────────────────────────────────
+Jan 2025      $7,916.67     [Converted Amount]
+Feb 2025      $7,916.67     [Converted Amount]
+Mar 2025      $7,916.67     [Converted Amount]
+Apr 2025      $7,916.67     [Converted Amount]
+May 2025      $7,916.67     [Converted Amount]
+Jun 2025      $7,916.67     [Converted Amount]
+Jul 2025      $7,916.67     [Converted Amount]
+Aug 2025      $7,916.67     [Converted Amount]
+Sep 2025      $7,916.67     [Converted Amount]
+Oct 2025      $7,916.67     [Converted Amount]
+Nov 2025      $7,916.67     [Converted Amount]
+Dec 2025      $7,916.67     [Converted Amount]
+─────────────────────────────────────────────────────
+TOTAL         $95,000.00    [Total in ${city.currency}]
 
 ───────────────────────────────────────────────────────────────
 VERIFICATION STATUS
 ───────────────────────────────────────────────────────────────
-☑ Bank statements verified
-☑ Employer confirmation received
-☑ Tax returns cross-referenced
-☑ Blockchain attestation complete
+✓ Income Source: Verified (Employer: Fortune 500 Company)
+✓ Payment History: 36 consecutive months
+✓ Bank Verification: Confirmed
+✓ Blockchain Hash: 0x${Array(40).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('')}
+
+───────────────────────────────────────────────────────────────
+${city.country.toUpperCase()} COMPLIANCE NOTE
+───────────────────────────────────────────────────────────────
+This income statement is formatted for ${city.country} authorities.
+Local tax rate: ${city.taxRate}
+Applicable treaty: ${city.treaty}
 
 This document is cryptographically signed and can be
 verified at: verify.equinoxflow.com/VIS-${Date.now()}
 
 Generated by Equinox Flow Compliance Engine
+Document ID: EQ-VIS-${city.country.substring(0,2).toUpperCase()}-${Date.now()}
       `,
       credibility: `
 ═══════════════════════════════════════════════════════════════
             FINANCIAL CREDIBILITY LETTER
-              AI-Generated Attestation
+              For ${selectedCity} Landlords/Banks
 ═══════════════════════════════════════════════════════════════
 
 Date: ${date}
-Reference: FCL-${Date.now()}
+Reference: FCL-${city.country.substring(0,2).toUpperCase()}-${Date.now()}
+Destination: ${selectedCity}, ${city.country}
 
 To Whom It May Concern,
 
 ───────────────────────────────────────────────────────────────
 
 I am writing to introduce [Applicant Name], who has expressed
-interest in renting your property at \.
+interest in renting property in ${selectedCity}, ${city.country}.
 
 While the applicant's income originates from international
 sources, our Zero-Knowledge verification system has confirmed
 a Trust Score of 87.3/100, placing them in the top 8% of
 verified applicants.
 
-KEY VERIFIED ATTRIBUTES:
+───────────────────────────────────────────────────────────────
+KEY VERIFIED ATTRIBUTES
 ───────────────────────────────────────────────────────────────
 ✓ Consistent income for 36+ months
 ✓ Zero payment defaults in rental history
@@ -449,7 +521,17 @@ KEY VERIFIED ATTRIBUTES:
 ✓ Payment reliability score: 94%
 ✓ Credit history score: 91%
 
-ZERO-KNOWLEDGE VERIFICATION:
+───────────────────────────────────────────────────────────────
+${city.country.toUpperCase()} SPECIFIC INFORMATION
+───────────────────────────────────────────────────────────────
+Target City: ${selectedCity}
+Local Currency: ${city.currency}
+Tax Treaty: ${city.treaty}
+Expected Tax Rate: ${city.taxRate}
+Required ID: ${city.taxId}
+
+───────────────────────────────────────────────────────────────
+ZERO-KNOWLEDGE VERIFICATION
 ───────────────────────────────────────────────────────────────
 This letter is backed by cryptographic proofs that verify
 the applicant's financial standing without exposing sensitive
@@ -460,9 +542,12 @@ Verification URL: verify.equinoxflow.com/FCL-${Date.now()}
 Sincerely,
 Equinox Flow Negotiation Agent
 AI-Powered Financial Verification System
+
+Generated for: ${selectedCity}, ${city.country}
+Document ID: EQ-FCL-${city.country.substring(0,2).toUpperCase()}-${Date.now()}
       `
     };
-    return templates[doc.id] || `Document: ${doc.name}\nGenerated: ${date}\n\nContent for ${doc.name} would appear here.`;
+    return templates[doc.id] || `Document: ${doc.name}\nGenerated: ${date}\nCity: ${selectedCity}\n\nContent for ${doc.name} would appear here.`;
   };
 
   const renderTrustScoreRing = () => (
