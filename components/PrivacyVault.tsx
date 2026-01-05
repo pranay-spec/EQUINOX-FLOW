@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Shield, Lock, Eye, EyeOff, CheckCircle, Key, FileText,
-  Fingerprint, Server, Zap, AlertTriangle, Upload, Download
+  Fingerprint, Server, Zap, AlertTriangle, Upload, Download, X
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -25,6 +25,7 @@ interface EncryptedDocument {
   encrypted: boolean;
   uploadDate: string;
   size: string;
+  file?: File;
 }
 
 export function PrivacyVault() {
@@ -33,6 +34,10 @@ export function PrivacyVault() {
   const [proofGenerated, setProofGenerated] = useState(false);
   const [selectedClaim, setSelectedClaim] = useState<string>('income');
   const [revealedDocs, setRevealedDocs] = useState<Set<string>>(new Set());
+  const [uploadedDocs, setUploadedDocs] = useState<EncryptedDocument[]>([]);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const zkProofs: ZKProof[] = [
     { id: '1', type: 'Income Verification', claim: 'Annual income exceeds $80,000', status: 'verified', timestamp: '2026-01-04', proofHash: '0x7f3a...8c2d' },
@@ -41,12 +46,86 @@ export function PrivacyVault() {
     { id: '4', type: 'Credit History', claim: 'No defaults in past 5 years', status: 'pending', timestamp: '2026-01-04', proofHash: '0x1a8f...2c3d' },
   ];
 
-  const encryptedDocs: EncryptedDocument[] = [
+  const defaultDocs: EncryptedDocument[] = [
     { id: 'd1', name: 'Bank_Statement_Dec2025.pdf', type: 'Financial', encrypted: true, uploadDate: '2025-12-28', size: '2.4 MB' },
     { id: 'd2', name: 'Employment_Contract.pdf', type: 'Employment', encrypted: true, uploadDate: '2025-11-15', size: '1.1 MB' },
     { id: 'd3', name: 'Passport_Scan.pdf', type: 'Identity', encrypted: true, uploadDate: '2025-10-20', size: '3.2 MB' },
     { id: 'd4', name: 'Tax_Return_2024.pdf', type: 'Tax', encrypted: true, uploadDate: '2025-04-15', size: '4.8 MB' },
   ];
+
+  const allDocs = [...defaultDocs, ...uploadedDocs];
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  };
+
+  const getFileType = (fileName: string): string => {
+    const lower = fileName.toLowerCase();
+    if (lower.includes('bank') || lower.includes('statement') || lower.includes('financial')) return 'Financial';
+    if (lower.includes('passport') || lower.includes('id') || lower.includes('identity')) return 'Identity';
+    if (lower.includes('tax') || lower.includes('return')) return 'Tax';
+    if (lower.includes('contract') || lower.includes('employment') || lower.includes('offer')) return 'Employment';
+    return 'Document';
+  };
+
+  const handleFileUpload = (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    
+    const newDocs: EncryptedDocument[] = [];
+    Array.from(files).forEach((file) => {
+      const newDoc: EncryptedDocument = {
+        id: 'u' + Date.now() + Math.random().toString(36).slice(2),
+        name: file.name,
+        type: getFileType(file.name),
+        encrypted: true,
+        uploadDate: new Date().toISOString().split('T')[0],
+        size: formatFileSize(file.size),
+        file: file
+      };
+      newDocs.push(newDoc);
+    });
+    
+    setUploadedDocs(prev => [...prev, ...newDocs]);
+    setShowUploadModal(false);
+    toast.success(`${files.length} file(s) encrypted and uploaded!`, { icon: '🔐' });
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    handleFileUpload(e.dataTransfer.files);
+  };
+
+  const handleDownload = (doc: EncryptedDocument) => {
+    if (doc.file) {
+      // For uploaded files, create download link
+      const url = URL.createObjectURL(doc.file);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = doc.name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast.success(`Decrypted and downloaded: ${doc.name}`, { icon: '📥' });
+    } else {
+      // For demo files, show message
+      toast.success(`Demo file - in production this would decrypt and download: ${doc.name}`, { icon: '📥' });
+    }
+  };
 
   const generateZKProof = () => {
     setGeneratingProof(true);
@@ -179,15 +258,80 @@ export function PrivacyVault() {
               </div>
             </div>
             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-              onClick={() => toast.success('Upload feature - drag & drop your documents')}
+              onClick={() => setShowUploadModal(true)}
               style={{ padding: '8px 14px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'white', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Upload style={{ width: '14px', height: '14px' }} />
               Upload
             </motion.button>
           </div>
 
+          {/* Upload Modal */}
+          <AnimatePresence>
+            {showUploadModal && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}
+                onClick={() => setShowUploadModal(false)}
+              >
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.9, opacity: 0 }}
+                  onClick={(e) => e.stopPropagation()}
+                  style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)', borderRadius: '20px', padding: '32px', width: '90%', maxWidth: '500px', border: '1px solid rgba(102, 126, 234, 0.3)' }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+                    <h3 style={{ fontSize: '20px', fontWeight: 700, color: 'white' }}>Upload Documents</h3>
+                    <button onClick={() => setShowUploadModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.6)' }}>
+                      <X style={{ width: '20px', height: '20px' }} />
+                    </button>
+                  </div>
+                  
+                  <div
+                    onDragEnter={handleDrag}
+                    onDragLeave={handleDrag}
+                    onDragOver={handleDrag}
+                    onDrop={handleDrop}
+                    onClick={() => fileInputRef.current?.click()}
+                    style={{
+                      border: `2px dashed ${dragActive ? '#8b5cf6' : 'rgba(255,255,255,0.2)'}`,
+                      borderRadius: '16px',
+                      padding: '48px 24px',
+                      textAlign: 'center',
+                      cursor: 'pointer',
+                      background: dragActive ? 'rgba(139, 92, 246, 0.1)' : 'rgba(0,0,0,0.2)',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <Upload style={{ width: '48px', height: '48px', color: dragActive ? '#8b5cf6' : 'rgba(255,255,255,0.4)', margin: '0 auto 16px' }} />
+                    <p style={{ fontSize: '16px', fontWeight: 600, color: 'white', marginBottom: '8px' }}>
+                      {dragActive ? 'Drop files here' : 'Drag & drop files here'}
+                    </p>
+                    <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>
+                      or click to browse
+                    </p>
+                    <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)', marginTop: '16px' }}>
+                      Files will be encrypted with AES-256 before upload
+                    </p>
+                  </div>
+                  
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    onChange={(e) => handleFileUpload(e.target.files)}
+                    style={{ display: 'none' }}
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                  />
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {encryptedDocs.map((doc) => (
+            {allDocs.map((doc) => (
               <div key={doc.id} style={{ padding: '14px', background: 'rgba(0,0,0,0.2)', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '14px' }}>
                 <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: 'rgba(59, 130, 246, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <FileText style={{ width: '18px', height: '18px', color: '#3b82f6' }} />
@@ -214,7 +358,7 @@ export function PrivacyVault() {
                     {revealedDocs.has(doc.id) ? <EyeOff style={{ width: '14px', height: '14px' }} /> : <Eye style={{ width: '14px', height: '14px' }} />}
                   </motion.button>
                   <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-                    onClick={() => toast.success('Decrypting and downloading...')}
+                    onClick={() => handleDownload(doc)}
                     style={{ padding: '8px', background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: '6px', cursor: 'pointer', color: 'rgba(255,255,255,0.6)' }}>
                     <Download style={{ width: '14px', height: '14px' }} />
                   </motion.button>
