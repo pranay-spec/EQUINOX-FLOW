@@ -147,6 +147,22 @@ export default function Home() {
         'Melbourne': { wealthMultiplier1: 0.86, wealthMultiplier5: 1.55, riskScore: 0.13, qualityScore: 0.95, costIncrease: 16.2, taxBurden: 32.0, hiddenCosts: 12200, riskLevel: 'Low' },
         'Auckland, New Zealand': { wealthMultiplier1: 0.87, wealthMultiplier5: 1.58, riskScore: 0.12, qualityScore: 0.94, costIncrease: 14.5, taxBurden: 33.0, hiddenCosts: 11000, riskLevel: 'Low' },
         'Auckland': { wealthMultiplier1: 0.87, wealthMultiplier5: 1.58, riskScore: 0.12, qualityScore: 0.94, costIncrease: 14.5, taxBurden: 33.0, hiddenCosts: 11000, riskLevel: 'Low' },
+        // Indian Cities - Lower salaries but low cost, moderate growth
+        'Pune, India': { wealthMultiplier1: 0.65, wealthMultiplier5: 1.15, riskScore: 0.28, qualityScore: 0.72, costIncrease: 6.5, taxBurden: 30.0, hiddenCosts: 2800, riskLevel: 'Medium' },
+        'Pune': { wealthMultiplier1: 0.65, wealthMultiplier5: 1.15, riskScore: 0.28, qualityScore: 0.72, costIncrease: 6.5, taxBurden: 30.0, hiddenCosts: 2800, riskLevel: 'Medium' },
+        'Mumbai, India': { wealthMultiplier1: 0.62, wealthMultiplier5: 1.18, riskScore: 0.30, qualityScore: 0.70, costIncrease: 8.5, taxBurden: 30.0, hiddenCosts: 4200, riskLevel: 'Medium' },
+        'Mumbai': { wealthMultiplier1: 0.62, wealthMultiplier5: 1.18, riskScore: 0.30, qualityScore: 0.70, costIncrease: 8.5, taxBurden: 30.0, hiddenCosts: 4200, riskLevel: 'Medium' },
+        'Bangalore, India': { wealthMultiplier1: 0.68, wealthMultiplier5: 1.22, riskScore: 0.26, qualityScore: 0.74, costIncrease: 7.2, taxBurden: 30.0, hiddenCosts: 3500, riskLevel: 'Medium' },
+        'Bangalore': { wealthMultiplier1: 0.68, wealthMultiplier5: 1.22, riskScore: 0.26, qualityScore: 0.74, costIncrease: 7.2, taxBurden: 30.0, hiddenCosts: 3500, riskLevel: 'Medium' },
+        'Bengaluru, India': { wealthMultiplier1: 0.68, wealthMultiplier5: 1.22, riskScore: 0.26, qualityScore: 0.74, costIncrease: 7.2, taxBurden: 30.0, hiddenCosts: 3500, riskLevel: 'Medium' },
+        'Bengaluru': { wealthMultiplier1: 0.68, wealthMultiplier5: 1.22, riskScore: 0.26, qualityScore: 0.74, costIncrease: 7.2, taxBurden: 30.0, hiddenCosts: 3500, riskLevel: 'Medium' },
+        'Delhi, India': { wealthMultiplier1: 0.60, wealthMultiplier5: 1.12, riskScore: 0.35, qualityScore: 0.65, costIncrease: 7.8, taxBurden: 30.0, hiddenCosts: 3800, riskLevel: 'High' },
+        'Delhi': { wealthMultiplier1: 0.60, wealthMultiplier5: 1.12, riskScore: 0.35, qualityScore: 0.65, costIncrease: 7.8, taxBurden: 30.0, hiddenCosts: 3800, riskLevel: 'High' },
+        'New Delhi, India': { wealthMultiplier1: 0.60, wealthMultiplier5: 1.12, riskScore: 0.35, qualityScore: 0.65, costIncrease: 7.8, taxBurden: 30.0, hiddenCosts: 3800, riskLevel: 'High' },
+        'Hyderabad, India': { wealthMultiplier1: 0.66, wealthMultiplier5: 1.20, riskScore: 0.27, qualityScore: 0.73, costIncrease: 6.2, taxBurden: 30.0, hiddenCosts: 3200, riskLevel: 'Medium' },
+        'Hyderabad': { wealthMultiplier1: 0.66, wealthMultiplier5: 1.20, riskScore: 0.27, qualityScore: 0.73, costIncrease: 6.2, taxBurden: 30.0, hiddenCosts: 3200, riskLevel: 'Medium' },
+        'Chennai, India': { wealthMultiplier1: 0.64, wealthMultiplier5: 1.16, riskScore: 0.28, qualityScore: 0.71, costIncrease: 5.8, taxBurden: 30.0, hiddenCosts: 3000, riskLevel: 'Medium' },
+        'Chennai': { wealthMultiplier1: 0.64, wealthMultiplier5: 1.16, riskScore: 0.28, qualityScore: 0.71, costIncrease: 5.8, taxBurden: 30.0, hiddenCosts: 3000, riskLevel: 'Medium' },
       };
 
       // Get the primary selected city
@@ -171,15 +187,15 @@ export default function Home() {
       
       // Build scenarios with actual city data
       const buildScenario = (cityKey: string, salary: number) => {
-        // Try to find city data, or generate reasonable defaults
+        // Try to find city data, or generate conservative defaults for unknown cities
         const data = cityData[cityKey] || {
-          wealthMultiplier1: 0.85,
-          wealthMultiplier5: 1.50,
-          riskScore: 0.20,
-          qualityScore: 0.85,
-          costIncrease: 15.0,
+          wealthMultiplier1: 0.70,
+          wealthMultiplier5: 1.25,
+          riskScore: 0.30,
+          qualityScore: 0.75,
+          costIncrease: 10.0,
           taxBurden: 30.0,
-          hiddenCosts: 12000,
+          hiddenCosts: 8000,
           riskLevel: 'Medium'
         };
         return {
